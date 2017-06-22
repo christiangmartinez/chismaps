@@ -1,4 +1,4 @@
-#Mappy
+# Mappy
 
 #### _A location-based/visual social app_
 
