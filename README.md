@@ -1,5 +1,6 @@
 #Mappy
-####_A location-based/visual social app_
+
+#### _A location-based/visual social app_
 
 Mappy is an app that lets you know what going on wherever you are. The idea idea is to be able to get an idea of what is going on in your town from just a quick glance at a map of your location.
 
