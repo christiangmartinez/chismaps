@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "277955190145",
+    "firebase_url": "https://mappy-a9412.firebaseio.com",
+    "project_id": "mappy-a9412",
+    "storage_bucket": "mappy-a9412.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:277955190145:android:b6825594176c85ce",
+        "android_client_info": {
+          "package_name": "io.xtian.chismaps"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "277955190145-jdmjc3oj2of6q1l2msti3c3k5uk7bqlb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.xtian.chismaps",
+            "certificate_hash": "5806fb80761ca6442b5d035c20abce37b1f555d9"
+          }
+        },
+        {
+          "client_id": "277955190145-9rcll8fuptt74krkitmer0c96hhvmqff.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZ4nrEF51hVlT-djrF7G73dMCOCuUo11Q"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "277955190145-9rcll8fuptt74krkitmer0c96hhvmqff.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
