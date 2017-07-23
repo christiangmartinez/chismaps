@@ -25,6 +25,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -37,7 +38,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import io.xtian.chismaps.R;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
     @Bind(R.id.newComment) ImageView mNewComment;
     GoogleMap mGoogleMap;
     GoogleApiClient mGoogleApiClient;
@@ -50,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             setContentView(R.layout.activity_main);
             initMap();
         } else {
-            // No Google Maps Layout
+            setContentView(R.layout.activity_error);
         }
         ButterKnife.bind(this);
         mNewComment.setOnClickListener(this);
@@ -113,10 +114,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mGoogleMap = googleMap;
 //        goToLocation(45.5231, -122.6765, 16);
         mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(LocationServices.API)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build();
+                                .enableAutoManage(this, this)
+                                .addConnectionCallbacks(this)
+                                .addApi(LocationServices.API)
+                                .addApi(Places.GEO_DATA_API)
+                                .addApi(Places.PLACE_DETECTION_API)
+                                .build();
         mGoogleApiClient.connect();
     }
 
@@ -132,19 +135,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocationRequest.setInterval(1000);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
-            }
-        }
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
     }
 
     @Override
