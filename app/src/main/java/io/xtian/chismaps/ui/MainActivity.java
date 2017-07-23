@@ -38,8 +38,7 @@ import butterknife.ButterKnife;
 import io.xtian.chismaps.R;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
-    @Bind(R.id.newComment)
-    ImageView mNewComment;
+    @Bind(R.id.newComment) ImageView mNewComment;
     GoogleMap mGoogleMap;
     GoogleApiClient mGoogleApiClient;
     LocationRequest mLocationRequest;
