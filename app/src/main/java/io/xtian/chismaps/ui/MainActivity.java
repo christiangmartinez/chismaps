@@ -2,6 +2,7 @@ package io.xtian.chismaps.ui;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -10,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,9 +26,13 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.PlaceLikelihood;
+import com.google.android.gms.location.places.PlaceLikelihoodBuffer;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -36,6 +42,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 
 import butterknife.Bind;
@@ -54,6 +61,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int DEFAULT_ZOOM = 16;
     private boolean mLocationPermissionGranted;
     public static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
+    private final int mMaxEntries = 5;
+    private String[] mLikelyPlaceNames = new String[mMaxEntries];
+    private String[] mLikelyPlaceAddresses = new String[mMaxEntries];
+    private String[] mLikelyPlaceAttributions = new String[mMaxEntries];
+    private LatLng[] mLikelyPlaceLatLngs = new LatLng[mMaxEntries];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,18 +80,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     .addApi(Places.PLACE_DETECTION_API)
                     .build();
             mGoogleApiClient.connect();
-//            initMap();
         } else {
             setContentView(R.layout.activity_error);
         }
         ButterKnife.bind(this);
         mNewComment.setOnClickListener(this);
     }
-
-//    private void initMap() {
-//        MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.mapFragment);
-//        mapFragment.getMapAsync(this);
-//    }
 
     public boolean googleServicesAvailable() {
         GoogleApiAvailability api = GoogleApiAvailability.getInstance();
@@ -133,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mMap = map;
         updateLocationUI();
         getDeviceLocation();
-
+        showCurrentPlace();
     }
 
     private void getDeviceLocation() {
@@ -165,6 +171,89 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    private void showCurrentPlace() {
+        if (mMap == null) {
+            return;
+        }
+
+        if (mLocationPermissionGranted) {
+            // Get the likely places - that is, the businesses and other points of interest that
+            // are the best match for the device's current location.
+            @SuppressWarnings("MissingPermission")
+            PendingResult<PlaceLikelihoodBuffer> result = Places.PlaceDetectionApi
+                    .getCurrentPlace(mGoogleApiClient, null);
+            result.setResultCallback(new ResultCallback<PlaceLikelihoodBuffer>() {
+                @Override
+                public void onResult(@NonNull PlaceLikelihoodBuffer likelyPlaces) {
+                    int i = 0;
+                    mLikelyPlaceNames = new String[mMaxEntries];
+                    mLikelyPlaceAddresses = new String[mMaxEntries];
+                    mLikelyPlaceAttributions = new String[mMaxEntries];
+                    mLikelyPlaceLatLngs = new LatLng[mMaxEntries];
+                    for (PlaceLikelihood placeLikelihood : likelyPlaces) {
+                        // Build a list of likely places to show the user. Max 5.
+                        mLikelyPlaceNames[i] = (String) placeLikelihood.getPlace().getName();
+                        mLikelyPlaceAddresses[i] = (String) placeLikelihood.getPlace().getAddress();
+                        mLikelyPlaceAttributions[i] = (String) placeLikelihood.getPlace()
+                                .getAttributions();
+                        mLikelyPlaceLatLngs[i] = placeLikelihood.getPlace().getLatLng();
+
+                        i++;
+                        if (i > (mMaxEntries - 1)) {
+                            break;
+                        }
+                    }
+                    // Release the place likelihood buffer, to avoid memory leaks.
+                    likelyPlaces.release();
+
+                    // Show a dialog offering the user the list of likely places, and add a
+                    // marker at the selected place.
+//                    openPlacesDialog();
+                }
+            });
+        }
+
+//        else {
+//            // Add a default marker, because the user hasn't selected a place.
+//            mMap.addMarker(new MarkerOptions()
+////                    .title(getString(R.string.default_info_title))
+////                    .position(mDefaultLocation)
+////                    .snippet(getString(R.string.default_info_snippet)));
+//        }
+    }
+
+//    private void openPlacesDialog() {
+//        // Ask the user to choose the place where they are now.
+//        DialogInterface.OnClickListener listener =
+//                new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        // The "which" argument contains the position of the selected item.
+//                        LatLng markerLatLng = mLikelyPlaceLatLngs[which];
+//                        String markerSnippet = mLikelyPlaceAddresses[which];
+//                        if (mLikelyPlaceAttributions[which] != null) {
+//                            markerSnippet = markerSnippet + "\n" + mLikelyPlaceAttributions[which];
+//                        }
+//                        // Add a marker for the selected place, with an info window
+//                        // showing information about that place.
+//                        mMap.addMarker(new MarkerOptions()
+//                                .title(mLikelyPlaceNames[which])
+//                                .position(markerLatLng)
+//                                .snippet(markerSnippet));
+//
+//                        // Position the map's camera at the location of the marker.
+//                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(markerLatLng,
+//                                DEFAULT_ZOOM));
+//                    }
+//                };
+//
+//        // Display the dialog.
+//        AlertDialog dialog = new AlertDialog.Builder(this)
+//                .setTitle(R.string.pick_place)
+//                .setItems(mLikelyPlaceNames, listener)
+//                .show();
+//    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String permissions[],
@@ -181,12 +270,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         updateLocationUI();
     }
-
-////    private void goToLocation(double lat, double lng, float zoom) {
-////        LatLng latlng = new LatLng(lat, lng);
-////        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(latlng, zoom);
-////        mGoogleMap.moveCamera(update);
-//    }
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
@@ -228,15 +311,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-//    @Override
-//    public void onLocationChanged(Location location) {
-//        if (location == null) {
-//            Toast.makeText(this, "Can't find current location.", Toast.LENGTH_LONG).show();
-//        } else {
-//            Toast.makeText(this, "got location, it's something else.", Toast.LENGTH_LONG).show();
-//            LatLng latlng = new LatLng(location.getLatitude(), location.getLongitude());
-//            CameraUpdate update = CameraUpdateFactory.newLatLngZoom(latlng, 15);
-//            mGoogleMap.animateCamera(update);
-//        }
-//    }
 }
