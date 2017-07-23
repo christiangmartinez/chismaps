@@ -29,6 +29,7 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
     @Bind(R.id.newConfirmPassword) EditText newConfirmPassword;
     @Bind(R.id.startButton) Button  startButton;
     @Bind(R.id.goLogin) TextView goLogin;
+    private String displayName;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private ProgressDialog mAuthProgressDialog;
@@ -68,6 +69,7 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
     }
 
     private void createAccount() {
+        displayName = newUsername.getText().toString().trim();
         final String email = newEmail.getText().toString().trim();
         final String username = newUsername.getText().toString().trim();
         final String password = newPassword.getText().toString().trim();
@@ -149,5 +151,9 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
             return false;
         }
         return true;
+    }
+
+    public String getDisplayName() {
+        return displayName;
     }
 }
