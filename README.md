@@ -1,10 +1,10 @@
 # Mappy
 
-#### _A location-based/visual social app_
+#### _A location-based social app_
 
-Mappy is an app that lets you know what going on wherever you are. The idea idea is to be able to get an idea of what is going on in your town from just a quick glance at a map of your location.
+Mappy is an app that lets you know what's going on wherever you are. You'll able to get an idea of what's going on in your town from just a quick glance at a map of your location.
 
-Leave a comment about something going on where you are - an awesome local show, a sale some product at the store, a cool meetup or presentation you're attending, your comment will be represented by a pin at the location of the event.
+Leave a comment about something going on where you are - an awesome local show, a sale on your favorite product at the store, or a cool meetup or presentation you're attending, your comment will be represented by a pin at the location of the event.
 
  
  
