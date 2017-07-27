@@ -140,6 +140,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         updateLocationUI();
         getDeviceLocation();
         showCurrentPlace();
+        map.addMarker(new MarkerOptions()
+            .position(new LatLng(mLastKnownLocation.getLatitude(),mLastKnownLocation.getLongitude()))
+            .title("Heyyy"));
     }
 
     private void getDeviceLocation() {
