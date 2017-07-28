@@ -38,6 +38,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -60,8 +62,8 @@ import io.xtian.chismaps.models.Comment;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
     @Bind(R.id.newComment) ImageView mNewComment;
     private static final String TAG = MainActivity.class.getSimpleName();
-    private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
+    private GoogleMap mMap;
     private Location mLastKnownLocation;
     private final LatLng mDefaultLocation = new LatLng(78.4645, 106.8340);
     private static final int DEFAULT_ZOOM = 16;
@@ -153,7 +155,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         updateLocationUI();
         getDeviceLocation();
         showCurrentPlace();
-
         if (mLastKnownLocation == null) {
             Toast.makeText(this, "Enable location to leave Antarctica", Toast.LENGTH_LONG).show();
         }
@@ -161,8 +162,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        for(DataSnapshot snapshot :dataSnapshot.getChildren()) {
+                        for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             Comment comment = snapshot.getValue(Comment.class);
+                            double lat = Double.parseDouble(comment.getCommentLatitude());
+                            double lng = Double.parseDouble(comment.getCommentLongitude());
+
+                            mMap.addMarker(new MarkerOptions()
+                                .position(new LatLng(lat, lng))
+                                .title("Mappy")
+                                .snippet(comment.getBody()));
                             Log.d("LOGTRON", comment.getBody());
                         }
                     }
