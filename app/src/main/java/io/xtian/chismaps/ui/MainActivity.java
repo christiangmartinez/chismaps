@@ -42,6 +42,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private CameraPosition mCameraPosition;
     LocationRequest mLocationRequest;
     private Location mLastKnownLocation;
-    private final LatLng mDefaultLocation = new LatLng(36.6002, -121.8947);
+    private final LatLng mDefaultLocation = new LatLng(78.4645, 106.8340);
     private static final int DEFAULT_ZOOM = 16;
     private boolean mLocationPermissionGranted;
     public static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
@@ -104,6 +105,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         if (v == mNewComment) {
+            LatLng userLatLng= new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
+            String userLatLngString = userLatLng.toString();
+            Log.d("LOGTRON", userLatLngString);
             Intent intent = new Intent(MainActivity.this, NewCommentActivity.class);
             startActivity(intent);
         }
@@ -140,9 +144,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         updateLocationUI();
         getDeviceLocation();
         showCurrentPlace();
-        map.addMarker(new MarkerOptions()
-            .position(new LatLng(mLastKnownLocation.getLatitude(),mLastKnownLocation.getLongitude()))
-            .title("Heyyy"));
+        if (mLastKnownLocation != null) {
+            Marker example = map.addMarker(new MarkerOptions()
+                    .position(new LatLng(mLastKnownLocation.getLatitude(),mLastKnownLocation.getLongitude()))
+                    .title("Dog")
+                    .snippet("Just had the best burrito here!"));
+            example.showInfoWindow();
+            example.hideInfoWindow();
+        } else {
+            Toast.makeText(this, "Enable location to leave Antarctica", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void getDeviceLocation() {

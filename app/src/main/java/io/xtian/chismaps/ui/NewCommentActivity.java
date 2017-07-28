@@ -1,11 +1,14 @@
 package io.xtian.chismaps.ui;
 
 import android.content.Intent;
+import android.location.Location;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -27,8 +30,9 @@ public class NewCommentActivity extends AppCompatActivity implements View.OnClic
     public void onClick(View v) {
         if (v == mNewCommentButton) {
             String comment = mNewCommentText.getText().toString();
-            Intent intent = new Intent(NewCommentActivity.this, FeedActivity.class);
+            Intent intent = new Intent(NewCommentActivity.this, MainActivity.class);
             intent.putExtra("comment", comment);
+            Log.d("LOGTRON", comment);
             startActivity(intent);
         }
     }
