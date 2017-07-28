@@ -1,19 +1,27 @@
 package io.xtian.chismaps.models;
 
 public class Comment {
-    private String location;
+    private String longitude;
+    private String latitude;
     private String body;
 
-    public Comment(String location, String body) {
-        this.location = location;
+    public Comment(String longitude, String latitude, String body) {
+        this.longitude = longitude;
+        this.latitude = latitude;
         this.body = body;
     }
 
     public Comment() {};
 
-    public String getLocation() {
-        return location;
+    public String getLongitude() {
+        return longitude;
     }
+
+    public String getLatitude() {
+        return latitude;
+    }
+
+
 
     public String getBody() {
         return body;

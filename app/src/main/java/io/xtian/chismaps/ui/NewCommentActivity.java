@@ -25,8 +25,9 @@ import com.google.firebase.database.FirebaseDatabase;
 public class NewCommentActivity extends AppCompatActivity implements View.OnClickListener{
     @Bind(R.id.newCommentText) EditText mNewCommentText;
     @Bind(R.id.newCommentButton) Button mNewCommentButton;
-    private String llString;
-    private Comment newComment;
+    private String userLat;
+    private String userLong;
+    Comment newComment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,15 +35,16 @@ public class NewCommentActivity extends AppCompatActivity implements View.OnClic
         setContentView(R.layout.activity_new_comment);
         ButterKnife.bind(this);
         mNewCommentButton.setOnClickListener(this);
-        Intent intent = getIntent();
-        llString = intent.getStringExtra("userLatLngString");
+        Bundle b = getIntent().getExtras();
+        userLat = Double.toString(b.getDouble("userLat"));
+        userLong = Double.toString(b.getDouble("userLong"));
     }
 
     @Override
     public void onClick(View v) {
         if (v == mNewCommentButton) {
             String commentText = mNewCommentText.getText().toString();
-            newComment = new Comment(llString, commentText);
+            newComment = new Comment(userLat, userLong, commentText);
             DatabaseReference commentRef = FirebaseDatabase
                     .getInstance()
                     .getReference(Constants.FIREBASE_CHILD_COMMENTS);

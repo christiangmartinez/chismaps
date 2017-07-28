@@ -30,7 +30,7 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
     @Bind(R.id.newConfirmPassword) EditText newConfirmPassword;
     @Bind(R.id.startButton) Button  startButton;
     @Bind(R.id.goLogin) TextView goLogin;
-    private String displayName;
+    String displayName;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private ProgressDialog mAuthProgressDialog;

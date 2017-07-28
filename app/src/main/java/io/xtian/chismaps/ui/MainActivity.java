@@ -111,10 +111,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         if (v == mNewComment) {
-            LatLng userLatLng= new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
-            String userLatLngString = userLatLng.toString();
+            double userLat = mLastKnownLocation.getLatitude();
+            double userLong = mLastKnownLocation.getLongitude();
             Intent intent = new Intent(MainActivity.this, NewCommentActivity.class);
-            intent.putExtra("userLatLngString", userLatLngString);
+            Bundle b = new Bundle();
+            b.putDouble("userLat", userLat);
+            b.putDouble("userLong", userLong);
+            intent.putExtras(b);
             startActivity(intent);
         }
     }
@@ -147,13 +150,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onMapReady(GoogleMap map) {
         mMap = map;
+        updateLocationUI();
+        getDeviceLocation();
+        showCurrentPlace();
 
         if (mLastKnownLocation == null) {
             Toast.makeText(this, "Enable location to leave Antarctica", Toast.LENGTH_LONG).show();
         }
-        updateLocationUI();
-        getDeviceLocation();
-        showCurrentPlace();
         FirebaseDatabase.getInstance().getReference(Constants.FIREBASE_CHILD_COMMENTS)
                 .addValueEventListener(new ValueEventListener() {
                     @Override
