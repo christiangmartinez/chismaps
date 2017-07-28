@@ -11,14 +11,14 @@
         android:id="@+id/newComment"
         android:layout_width="82dp"
         android:layout_height="72dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:srcCompat="@android:drawable/ic_menu_add"
+        android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
-        app:layout_constraintHorizontal_bias="0.503"
         android:layout_marginRight="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="8dp" />
+        app:layout_constraintHorizontal_bias="0.503"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:srcCompat="@drawable/customaddbutton" />
 
     <fragment
         android:id="@+id/mapFragment"

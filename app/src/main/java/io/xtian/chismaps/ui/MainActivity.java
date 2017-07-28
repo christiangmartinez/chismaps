@@ -19,10 +19,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -40,27 +38,38 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import io.xtian.chismaps.Constants;
 import io.xtian.chismaps.R;
+import io.xtian.chismaps.models.Comment;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
     @Bind(R.id.newComment) ImageView mNewComment;
     private static final String TAG = MainActivity.class.getSimpleName();
-    private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
-    private CameraPosition mCameraPosition;
-    LocationRequest mLocationRequest;
+    private GoogleMap mMap;
     private Location mLastKnownLocation;
-    private final LatLng mDefaultLocation = new LatLng(36.6002, -121.8947);
+    private final LatLng mDefaultLocation = new LatLng(78.4645, 106.8340);
     private static final int DEFAULT_ZOOM = 16;
     private boolean mLocationPermissionGranted;
     public static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
+    private CameraPosition mCameraPosition;
     private final int mMaxEntries = 5;
     private String[] mLikelyPlaceNames = new String[mMaxEntries];
     private String[] mLikelyPlaceAddresses = new String[mMaxEntries];
@@ -104,7 +113,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         if (v == mNewComment) {
+            double userLat = mLastKnownLocation.getLatitude();
+            double userLong = mLastKnownLocation.getLongitude();
             Intent intent = new Intent(MainActivity.this, NewCommentActivity.class);
+            Bundle b = new Bundle();
+            b.putDouble("userLat", userLat);
+            b.putDouble("userLong", userLong);
+            intent.putExtras(b);
             startActivity(intent);
         }
     }
@@ -140,6 +155,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         updateLocationUI();
         getDeviceLocation();
         showCurrentPlace();
+        if (mLastKnownLocation == null) {
+            Toast.makeText(this, "Enable location to leave Antarctica", Toast.LENGTH_LONG).show();
+        }
+        FirebaseDatabase.getInstance().getReference(Constants.FIREBASE_CHILD_COMMENTS)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            Comment comment = snapshot.getValue(Comment.class);
+                            double lat = Double.parseDouble(comment.getCommentLatitude());
+                            double lng = Double.parseDouble(comment.getCommentLongitude());
+
+                            mMap.addMarker(new MarkerOptions()
+                                .position(new LatLng(lat, lng))
+                                .title("Mappy")
+                                .snippet(comment.getBody()));
+                            Log.d("LOGTRON", comment.getBody());
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
     }
 
     private void getDeviceLocation() {
