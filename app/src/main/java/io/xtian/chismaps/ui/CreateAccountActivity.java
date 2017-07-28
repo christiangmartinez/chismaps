@@ -21,6 +21,7 @@ import com.google.firebase.auth.FirebaseUser;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import io.xtian.chismaps.R;
+import io.xtian.chismaps.models.User;
 
 public class CreateAccountActivity extends AppCompatActivity implements View.OnClickListener {
     @Bind(R.id.newEmail) EditText newEmail;
@@ -33,7 +34,7 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private ProgressDialog mAuthProgressDialog;
-
+    public User newUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +93,8 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
                         }
                     }
                 });
+        newUser = new User(displayName);
+        Log.d("LOGTRON", newUser.getUsername());
     }
 
 
@@ -153,7 +156,4 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
         return true;
     }
 
-    public String getDisplayName() {
-        return displayName;
-    }
 }

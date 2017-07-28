@@ -12,11 +12,21 @@ import android.widget.Toast;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import io.xtian.chismaps.Constants;
 import io.xtian.chismaps.R;
+import io.xtian.chismaps.models.Comment;
+import io.xtian.chismaps.models.User;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class NewCommentActivity extends AppCompatActivity implements View.OnClickListener{
     @Bind(R.id.newCommentText) EditText mNewCommentText;
     @Bind(R.id.newCommentButton) Button mNewCommentButton;
+    private String llString;
+    private Comment newComment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,16 +34,23 @@ public class NewCommentActivity extends AppCompatActivity implements View.OnClic
         setContentView(R.layout.activity_new_comment);
         ButterKnife.bind(this);
         mNewCommentButton.setOnClickListener(this);
+        Intent intent = getIntent();
+        llString = intent.getStringExtra("userLatLngString");
     }
 
     @Override
     public void onClick(View v) {
         if (v == mNewCommentButton) {
-            String comment = mNewCommentText.getText().toString();
+            String commentText = mNewCommentText.getText().toString();
+            newComment = new Comment(llString, commentText);
+            DatabaseReference commentRef = FirebaseDatabase
+                    .getInstance()
+                    .getReference(Constants.FIREBASE_CHILD_COMMENTS);
+            commentRef.push().setValue(newComment);
             Intent intent = new Intent(NewCommentActivity.this, MainActivity.class);
-            intent.putExtra("comment", comment);
-            Log.d("LOGTRON", comment);
+            intent.putExtra("commentText", commentText);
             startActivity(intent);
+
         }
     }
 }

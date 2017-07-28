@@ -36,7 +36,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.CreateAccountActivity" />
-        <activity android:name=".ui.FeedActivity" />
         <activity android:name=".ui.NewCommentActivity" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.

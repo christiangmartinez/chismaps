@@ -19,10 +19,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -45,23 +43,31 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import io.xtian.chismaps.Constants;
 import io.xtian.chismaps.R;
+import io.xtian.chismaps.models.Comment;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
     @Bind(R.id.newComment) ImageView mNewComment;
     private static final String TAG = MainActivity.class.getSimpleName();
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
-    private CameraPosition mCameraPosition;
-    LocationRequest mLocationRequest;
     private Location mLastKnownLocation;
     private final LatLng mDefaultLocation = new LatLng(78.4645, 106.8340);
     private static final int DEFAULT_ZOOM = 16;
     private boolean mLocationPermissionGranted;
     public static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
+    private CameraPosition mCameraPosition;
     private final int mMaxEntries = 5;
     private String[] mLikelyPlaceNames = new String[mMaxEntries];
     private String[] mLikelyPlaceAddresses = new String[mMaxEntries];
@@ -107,8 +113,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (v == mNewComment) {
             LatLng userLatLng= new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
             String userLatLngString = userLatLng.toString();
-            Log.d("LOGTRON", userLatLngString);
             Intent intent = new Intent(MainActivity.this, NewCommentActivity.class);
+            intent.putExtra("userLatLngString", userLatLngString);
             startActivity(intent);
         }
     }
@@ -141,19 +147,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onMapReady(GoogleMap map) {
         mMap = map;
+
+        if (mLastKnownLocation == null) {
+            Toast.makeText(this, "Enable location to leave Antarctica", Toast.LENGTH_LONG).show();
+        }
         updateLocationUI();
         getDeviceLocation();
         showCurrentPlace();
-        if (mLastKnownLocation != null) {
-            Marker example = map.addMarker(new MarkerOptions()
-                    .position(new LatLng(mLastKnownLocation.getLatitude(),mLastKnownLocation.getLongitude()))
-                    .title("Dog")
-                    .snippet("Just had the best burrito here!"));
-            example.showInfoWindow();
-            example.hideInfoWindow();
-        } else {
-            Toast.makeText(this, "Enable location to leave Antarctica", Toast.LENGTH_LONG).show();
-        }
+        FirebaseDatabase.getInstance().getReference(Constants.FIREBASE_CHILD_COMMENTS)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for(DataSnapshot snapshot :dataSnapshot.getChildren()) {
+                            Comment comment = snapshot.getValue(Comment.class);
+                            Log.d("LOGTRON", comment.getBody());
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
     }
 
     private void getDeviceLocation() {
