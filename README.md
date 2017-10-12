@@ -6,7 +6,7 @@ Mappy is an app that lets you know what's going on wherever you are. You'll able
 
 Leave a comment about something going on where you are - an awesome local show, a sale on your favorite product at the store, or a cool meetup or presentation you're attending, your comment will be represented by a pin at the location of the event.
 
- 
+ ![map](screenshot/map.png)
  
  ## Setup/Installation 
 * Clone this repository
@@ -14,18 +14,7 @@ Leave a comment about something going on where you are - an awesome local show, 
 * Run on Android Studio emulator or your android 
 
 ## License
-
+ 
 Copyright (c) 2017 **_Christian Martinez_**
 
 MIT license
-
-## Planning
-Mappy is still under development. The following features are planned but have yet to be implemented:
-
-* User authentication with Firebase
-* Utilize Google maps API
-* Show user's location on start up
-* User's comments are represented by a pin dropped on a map at user's location
-* Ability to navigate to detail view of comment from pin
-* Color code pins to correspond with amount of activity
-* Implement follow/like/reply functionality
