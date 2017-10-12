@@ -8,7 +8,7 @@ Leave a comment about something going on where you are - an awesome local show, 
 
  |                                |                                    | 
 | --------------------------------|----------------------------------- |
-| ![map](screenshot/map.png)      |  ![new comment](screenshot/post.png) |
+| ![map](screenshot/map.png)      |  ![new comment](screenshot/newpost.png) |
 | ![login](screenshot/login.png)   | ![new account](screenshot/new.png) |
  
  ## Setup/Installation 
