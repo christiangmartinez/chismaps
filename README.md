@@ -6,7 +6,9 @@ Mappy is an app that lets you know what's going on wherever you are. You'll able
 
 Leave a comment about something going on where you are - an awesome local show, a sale on your favorite product at the store, or a cool meetup or presentation you're attending, your comment will be represented by a pin at the location of the event.
 
- ![map](screenshot/map.png)
+ ![map](screenshot/map.png) ![new comment](screenshot/post.png)
+ 
+ ![login](screenshot/login.png) ![new account](screenshot/new.png)
  
  ## Setup/Installation 
 * Clone this repository
